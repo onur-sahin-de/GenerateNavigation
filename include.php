@@ -1,7 +1,7 @@
 <?php
 
 	/**
-	 * This file is part of an ADDON for use with WebsiteBaker CMS & LEPTON CMS Core.
+	 * This file is part of an ADDON for use with WebsiteBaker CMS
 	 * This ADDON is released under the GNU GPL.
 	 * Additional license terms can be seen in the info.php of this module.
 	 *
@@ -31,8 +31,18 @@
 		const PAGE_MENU = "menu";
 		const PAGE_POSITION = "position";
 		const PAGE_VISIBILITY = "visibility";
+		const PAGE_VISIBILITY_PUBLIC = "public";
+		const PAGE_VISIBILITY_REGISTERED  = "registered";
+		const PAGE_VISIBILITY_PRIVATE  = "private";
+		const PAGE_VISIBILITY_HIDDEN  = "hidden";
+		const PAGE_VISIBILITY_NONE  = "none";
 		const PAGE_TRAIL = "page_trail";
 		const COUNT_CHILDREN = "count_children";
+		
+		const PAGE_ADMIN_GROUPS = 'admin_groups';
+		const PAGE_ADMIN_USERS  = 'admin_users';
+		const PAGE_VIEW_GROUPS  = 'viewing_groups';
+		const PAGE_VIEW_USERS   = 'viewing_users';
 		
 		private $levelID = 0;
 		private $parentID = 0;
@@ -43,6 +53,8 @@
 		private $formatCode = "[li][a][at][/a]";
 		private $currentClassName = "current";
 		private $firstLevelIDName = "";
+		private $actualVisibilityOption = array("public");
+		private $isUserAllowedToSeeActualPage = false;
 		
 		protected $oDb  = null;
 		protected $oApp = null;
@@ -50,6 +62,17 @@
 		public function __construct(wb $oApplication, database $database) {
 			$this->oApp = $oApplication;
 			$this->oDb  = $database;
+		}
+		
+		public function debug($obj, $printAsVarDump) {
+			ob_start();
+			if($printAsVarDump) {
+				var_dump($obj);
+			} else {
+				print_r($obj);
+			}
+			$result = ob_get_clean();
+			echo '<pre style="margin-top: 100px">'.$result.'</pre>';
 		}
 		
 		public function setMenuID($getMenuID) {
@@ -98,7 +121,8 @@
 			$aClass = "";
 			$furtherNavigationOptionContent = "";
 
-			$sql = 'SELECT * FROM '.TABLE_PREFIX.'pages WHERE '.self::PAGE_LEVEL.' = '.$this->levelID.' AND '.self::PAGE_VISIBILITY.' = "public" AND '.self::PAGE_MENU.' = '.$this->menuID.' ORDER BY '.self::PAGE_POSITION.' ASC';
+			//$sql = 'SELECT * FROM '.TABLE_PREFIX.'pages WHERE '.self::PAGE_LEVEL.' = '.$this->levelID.' AND '.self::PAGE_VISIBILITY.' = "public" AND '.self::PAGE_MENU.' = '.$this->menuID.' ORDER BY '.self::PAGE_POSITION.' ASC';
+			$sql = 'SELECT * FROM '.TABLE_PREFIX.'pages WHERE '.self::PAGE_LEVEL.' = '.$this->levelID.' AND '.self::PAGE_MENU.' = '.$this->menuID.' ORDER BY '.self::PAGE_POSITION.' ASC';
 			$result = $this->oDb->query($sql);
 			
 			if($this->levelID == 0) {
@@ -109,8 +133,39 @@
 			}
 			
 			while($row = $result->fetchRow()) {
-				//echo $row[self::PAGE_ID];
-				//echo self::getVisibilityOfPageID($row[self::PAGE_ID])."<br>";
+
+				// Access-Control Check
+				if ($this->oApp->is_authenticated()) {
+				
+					// current user is logged in
+					if (
+						// is user in a group which is listed in PAGE_VIEW_GROUPS ?
+						$this->oApp->ami_group_member($row[self::PAGE_VIEW_GROUPS]) ||
+						// is user in the list of PAGE_VIEW_USERS ?
+						$this->oApp->is_group_match($this->oApp->get_user_id(), $row[self::PAGE_VIEW_USERS]) ||
+						// is user in a group which is listed in PAGE_ADMIN_GROUPS ?
+						$this->oApp->ami_group_member($row[self::PAGE_ADMIN_GROUPS]) ||
+						// is user in the list of PAGE_ADMIN_USERS ?
+						$this->oApp->is_group_match($this->oApp->get_user_id(), $row[self::PAGE_ADMIN_USERS])
+					) {
+						// ok, current user (privat user) got access to public, registered and privat
+						// Other Visibility options like "HIDDEN" and "NONE" will be ignored for the whitelist.
+						// The reason why the visibility option "NONE" is treated like the option "HIDDEN" (temporary): http://bit.ly/1OL2bhx
+						$this->actualVisibilityOption = array(self::PAGE_VISIBILITY_PUBLIC, self::PAGE_VISIBILITY_REGISTERED, self::PAGE_VISIBILITY_PRIVATE);
+					} 
+				} else {
+					// current user (public user) got access to public, registered
+					// Other Visibility options like "PRIVATE", "HIDDEN" and "NONE" will be ignored for the whitelist
+					// The reason why the visibility option "NONE" is treated like the option "HIDDEN" (temporary): http://bit.ly/1OL2bhx
+					$this->actualVisibilityOption = array(self::PAGE_VISIBILITY_PUBLIC, self::PAGE_VISIBILITY_REGISTERED);
+				}
+				
+				// Is the current user allowed to see the actual page?
+				$this->isUserAllowedToSeeActualPage = in_array(self::getVisibilityOfPageID($row[self::PAGE_ID]), $this->actualVisibilityOption);
+				
+				// If the user is not allowed to see this page skip the other statements inside the loop
+				if(!$this->isUserAllowedToSeeActualPage) continue;
+				
 				if(PAGE_ID == $row[self::PAGE_ID]) {
 					$liClass = "".$this->currentClassName." page-parent-".$row[self::PAGE_PARENT];
 				} else {
@@ -130,7 +185,7 @@
 					$furtherNavigationOptionContent = "";
 				}
 				
-				$liStartTag = '<li class="'.$liClass.'" id="page-id-'.$row[self::PAGE_ID].'">';
+				$liStartTag = '<li data-visibility="'.self::getVisibilityOfPageID($row[self::PAGE_ID]).'" class="'.$liClass.'" id="page-id-'.$row[self::PAGE_ID].'">';
 				$liEndTag = '</li>';
 				$aStartTag = '<a class="'.$aClass.'" target="'.$row[self::PAGE_TARGET].'" href="'.WB_URL.''.PAGES_DIRECTORY.''.$row[self::PAGE_LINK].''.PAGE_EXTENSION.'">';
 				$aText = $row[$this->naviTitleOption];
