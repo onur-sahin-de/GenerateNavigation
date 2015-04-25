@@ -8,9 +8,9 @@
 
 <h2>Download</h2>
 
-<p>You can download an archive of the latest development branch of the <code>GenerateNavigation</code> module using GitHubs <a href="https://github.com/onur-sahin-de/GenerateNavigation--WebsiteBaker-and-Lepton-Module-/archive/master.zip">ZIP button</a>. The archives of previous module releases can be found in GitHubs <a href="https://github.com/onur-sahin-de/GenerateNavigation--WebsiteBaker-and-Lepton-Module-/tags">Tags section</a>. The development history is tracked via <a href="https://github.com/onur-sahin-de/GenerateNavigation--WebsiteBaker-and-Lepton-Module-/commits/master">GitHub</a>.</p>
+<p>You can download an archive of the latest development branch of the <code>GenerateNavigation</code> module using GitHubs <a href="https://github.com/onur-sahin-de/GenerateNavigation/archive/master.zip">ZIP button</a>. The archives of previous module releases can be found in GitHubs <a href="https://github.com/onur-sahin-de/GenerateNavigation/tags">Tags section</a>. The development history is tracked via <a href="https://github.com/onur-sahin-de/GenerateNavigation/commits/master">GitHub</a>.</p>
 
-<p><strong><em>Please note:</em></strong> The archives downloaded from GitHub are not ready for installation in WebsiteBaker, as GitHub includes the archive subfolder. To create a working WebsiteBaker/Lepton installation archive, unpack the downloaded archive on your local computer and zip the contents of the folder <strong><em>GenerateNavigation--WebsiteBaker-and-Lepton-Module--master</em></strong> (without the folder itself). Alternatively download an installable archive from the WebsiteBaker <a href="#" title="will be later added">module section</a>.</p>
+<p><strong><em>Please note:</em></strong> The archives downloaded from GitHub are not ready for installation in WebsiteBaker, as GitHub includes the archive subfolder. To create a working WebsiteBaker/Lepton installation archive, unpack the downloaded archive on your local computer and zip the contents of the folder <strong><em>GenerateNavigation-master</em></strong> (without the folder itself). Alternatively download an installable archive from the WebsiteBaker <a href="#" title="will be later added">module section</a>.</p>
 
 <h2>License</h2>
 
@@ -28,7 +28,7 @@
 <h2>Installation</h2>
 
 <ol>
-	<li>download archive from <a href="https://github.com/onur-sahin-de/GenerateNavigation--WebsiteBaker-and-Lepton-Module-/archive/master.zip">GitHub</a></li>
+	<li>download archive from <a href="https://github.com/onur-sahin-de/GenerateNavigation/archive/master.zip">GitHub</a></li>
 	<li>log into your WebsiteBaker/Lepton backend and go to the <code>Add-ons/Modules</code> section</li>
 	<li>install the newly zipped archive via the WebsiteBaker/Lepton installer</li>
 </ol>
