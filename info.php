@@ -18,12 +18,12 @@
 	$module_name		= 'GenerateNavigation';
 	$module_function	= 'snippet';
 	$module_version		= '1.0.0';
-	$module_platform	= '1.x';
+	$module_platform	= '2.8.3';
 	$module_delete		=  false;
 	$module_author		= 'Onur Sahin, www.onur-sahin.de';
 	$module_license		= 'GNU General Public License';
 	$module_license_terms = '-';
 	$module_description	= 'A Module which creates navigations for WebsiteBaker (Also compatible with Lepton CMS). Bootstrap Navigations are also possible with this module.';
-	$module_guid		= 'dbb18dea-e4a7-4b7f-a1da-7f4e0f1a843d';
+	$module_description	.= '<br /><a target="_blank" href="doc/">Documentation</a>';
 	 
 ?>
