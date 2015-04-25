@@ -77,8 +77,8 @@
 		* @param int $getMenuID Select the menu which is to be generated (menu ID) 
 		* @return void
 		*/
-		public function setMenuID(int $getMenuID) {
-			$this->menuID = $getMenuID;
+		public function setMenuID($getMenuID) {
+			$this->menuID = intval($getMenuID);
 		}
 
 		/**
@@ -87,8 +87,8 @@
 		* @param int $getLevelID Selection of the starting level for the menu to be generated 
 		* @return void
 		*/
-		public function setLevelID(int $getLevelID) {
-			$this->levelID = $getLevelID;
+		public function setLevelID($getLevelID) {
+			$this->levelID = intval($getLevelID);
 		}
 
 		/**
@@ -97,8 +97,8 @@
 		* @param string $getCurrentClassName The class name for the active page
 		* @return void
 		*/
-		public function setCurrentClassName(string $getCurrentClassName) {
-			$this->currentClassName = $getCurrentClassName;	
+		public function setCurrentClassName($getCurrentClassName) {
+			$this->currentClassName = htmlentities($getCurrentClassName);	
 		}
 
 		/**
@@ -107,7 +107,7 @@
 		* @param string $getNaviTitleOption Sets the title name for the current to be generated menu item. Options are page_title OR menu_title. 
 		* @return void
 		*/
-		public function setNaviTitleOption(string $getNaviTitleOption) {
+		public function setNaviTitleOption($getNaviTitleOption) {
 			$this->naviTitleOption = $getNaviTitleOption;
 		}
 
@@ -127,8 +127,8 @@
 		* @param string $getFormatCode the code which sets the format code, example: $mainNavigation->setFormatCode("[li][a][fno][at][/a]")
 		* @return void
 		*/
-		public function setFormatCode(string $getFormatCode) {
-			$this->formatCode = $getFormatCode;
+		public function setFormatCode($getFormatCode) {
+			$this->formatCode = htmlentities($getFormatCode);
 		}
 		
 		/**
@@ -137,8 +137,8 @@
 		* @param string $getFirstLevelIDName sets the id of the first level
 		* @return void
 		*/
-		public function setFirstLevelIDName(string $getFirstLevelIDName) {
-			$this->firstLevelIDName = $getFirstLevelIDName;
+		public function setFirstLevelIDName($getFirstLevelIDName) {
+			$this->firstLevelIDName = htmlentities($getFirstLevelIDName);
 		}
 
 		/**
@@ -147,10 +147,10 @@
 		* @param int $getPageID the page-id which is needful to show the visibility status of the current page
 		* @return string
 		*/
-		public function getVisibilityOfPageID(int $getPageID) {
+		public function getVisibilityOfPageID($getPageID) {
 			$sql = 'SELECT * FROM '.TABLE_PREFIX.'pages WHERE '.self::PAGE_ID.' = '.$getPageID.'';
 			$result = $this->oDb->query($sql)->fetchRow();
-			return $result[self::PAGE_VISIBILITY];
+			return htmlentities($result[self::PAGE_VISIBILITY]);
 		}
 
 		/**
@@ -159,8 +159,8 @@
 		* @param int $getPageID the page-id which is needful to show if the current page-id has children or not
 		* @return boolean
 		*/
-		private function hasChildren(int $getPageID) {
-			$sql = 'SELECT count('.self::PAGE_ID.') AS '.self::COUNT_CHILDREN.' FROM '.TABLE_PREFIX.'pages where '.self::PAGE_PARENT.' = '.$getPageID.' AND '.self::PAGE_VISIBILITY.' = "public" ';
+		private function hasChildren($getPageID) {
+			$sql = 'SELECT count('.self::PAGE_ID.') AS '.self::COUNT_CHILDREN.' FROM '.TABLE_PREFIX.'pages where '.self::PAGE_PARENT.' = '.intval($getPageID).' AND '.self::PAGE_VISIBILITY.' = "public" ';
 			$result = $this->oDb->query($sql)->fetchRow();
 			return $result[self::COUNT_CHILDREN] > 0;
 		}
