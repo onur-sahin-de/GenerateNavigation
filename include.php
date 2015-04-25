@@ -59,62 +59,117 @@
 		protected $oDb  = null;
 		protected $oApp = null;
 		
+		/**
+		* The constructor
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param wb $oApplication wb-object, which provides access to the WB framework 
+		* @param database $database database-object, which provides access to the database 
+		* @return void
+		*/
 		public function __construct(wb $oApplication, database $database) {
 			$this->oApp = $oApplication;
 			$this->oDb  = $database;
 		}
 		
-		public function debug($obj, $printAsVarDump) {
-			ob_start();
-			if($printAsVarDump) {
-				var_dump($obj);
-			} else {
-				print_r($obj);
-			}
-			$result = ob_get_clean();
-			echo '<pre style="margin-top: 100px">'.$result.'</pre>';
-		}
-		
-		public function setMenuID($getMenuID) {
+		/**
+		* setMenuID
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param int $getMenuID Select the menu which is to be generated (menu ID) 
+		* @return void
+		*/
+		public function setMenuID(int $getMenuID) {
 			$this->menuID = $getMenuID;
 		}
-		
-		public function setLevelID($getLevelID) {
+
+		/**
+		* setLevelID
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param int $getLevelID Selection of the starting level for the menu to be generated 
+		* @return void
+		*/
+		public function setLevelID(int $getLevelID) {
 			$this->levelID = $getLevelID;
 		}
-		
-		public function setCurrentClassName($getCurrentClassName) {
+
+		/**
+		* setCurrentClassName
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param string $getCurrentClassName The class name for the active page
+		* @return void
+		*/
+		public function setCurrentClassName(string $getCurrentClassName) {
 			$this->currentClassName = $getCurrentClassName;	
 		}
-		
-		public function setNaviTitleOption($getNaviTitleOption) {
+
+		/**
+		* setNaviTitleOption
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param string $getNaviTitleOption Sets the title name for the current to be generated menu item. Options are page_title OR menu_title. 
+		* @return void
+		*/
+		public function setNaviTitleOption(string $getNaviTitleOption) {
 			$this->naviTitleOption = $getNaviTitleOption;
 		}
-		
-		public function setFurtherNavigationOption($getFurtherNavigationOption) {
+
+		/**
+		* setFurtherNavigationOption
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param array $getFurtherNavigationOption The code [fno] will be replaced with the settings of the array which is stored in setFurtherNavigationOption(array...) Example-Screenshot: http://bit.ly/1de46zy
+		* @return void 
+		*/
+		public function setFurtherNavigationOption(array $getFurtherNavigationOption) {
 			$this->furtherNavigationOption = $getFurtherNavigationOption;
 		}
-		
-		public function setFormatCode($getFormatCode) {
+
+		/**
+		* setFormatCode
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param string $getFormatCode the code which sets the format code, example: $mainNavigation->setFormatCode("[li][a][fno][at][/a]")
+		* @return void
+		*/
+		public function setFormatCode(string $getFormatCode) {
 			$this->formatCode = $getFormatCode;
 		}
 		
-		public function setFirstLevelIDName($getFirstLevelIDName) {
+		/**
+		* setFirstLevelIDName
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param string $getFirstLevelIDName sets the id of the first level
+		* @return void
+		*/
+		public function setFirstLevelIDName(string $getFirstLevelIDName) {
 			$this->firstLevelIDName = $getFirstLevelIDName;
 		}
-		
-		public function getVisibilityOfPageID($getPageID) {
+
+		/**
+		* getVisibilityOfPageID
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param int $getPageID the page-id which is needful to show the visibility status of the current page
+		* @return string
+		*/
+		public function getVisibilityOfPageID(int $getPageID) {
 			$sql = 'SELECT * FROM '.TABLE_PREFIX.'pages WHERE '.self::PAGE_ID.' = '.$getPageID.'';
 			$result = $this->oDb->query($sql)->fetchRow();
 			return $result[self::PAGE_VISIBILITY];
 		}
-		
-		private function hasChildren($getPageID) {
+
+		/**
+		* hasChildren
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @param int $getPageID the page-id which is needful to show if the current page-id has children or not
+		* @return boolean
+		*/
+		private function hasChildren(int $getPageID) {
 			$sql = 'SELECT count('.self::PAGE_ID.') AS '.self::COUNT_CHILDREN.' FROM '.TABLE_PREFIX.'pages where '.self::PAGE_PARENT.' = '.$getPageID.' AND '.self::PAGE_VISIBILITY.' = "public" ';
 			$result = $this->oDb->query($sql)->fetchRow();
 			return $result[self::COUNT_CHILDREN] > 0;
 		}
-		
+
+		/**
+		* generateNavigationCode
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @return void  generating and setting the navigation-code 
+		*/
 		private function generateNavigationCode() {
 			
 			$liClass = "";
@@ -185,7 +240,7 @@
 					$furtherNavigationOptionContent = "";
 				}
 				
-				$liStartTag = '<li data-visibility="'.self::getVisibilityOfPageID($row[self::PAGE_ID]).'" class="'.$liClass.'" id="page-id-'.$row[self::PAGE_ID].'">';
+				$liStartTag = '<li class="'.$liClass.'" id="page-id-'.$row[self::PAGE_ID].'">';
 				$liEndTag = '</li>';
 				$aStartTag = '<a class="'.$aClass.'" target="'.$row[self::PAGE_TARGET].'" href="'.WB_URL.''.PAGES_DIRECTORY.''.$row[self::PAGE_LINK].''.PAGE_EXTENSION.'">';
 				$aText = $row[$this->naviTitleOption];
@@ -209,24 +264,44 @@
 			$this->navigationCode .= '</ul></li>';
 			
 		}
-		
+
+		/**
+		* reset reseting the navigation-code, level-id and parent-id to prevent erroneous generation of the menu after calling the method generateNavigationCode() several times
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @return void
+		*/
 		private function reset() {
 			$this->navigationCode = "";
 			$this->levelID = 0;
 			$this->parentID = 0;
 		}
-		
+
+		/**
+		* getNavigationCode getting the navigation-code as a string
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @return void
+		*/
 		public function getNavigationCode() {
 			self::generateNavigationCode();
 			$navigationCodeWithoutLastLI = preg_replace('#</li>\\s*$#', '', $this->navigationCode);
 			self::reset();
 			return $navigationCodeWithoutLastLI;
 		}
-		
+
+		/**
+		* printNavigation printing the generated navigation-code
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @return void
+		*/ 
 		public function printNavigation() {
 			echo self::getNavigationCode();
 		}
-		
+
+		/**
+		* printNavigation adapt the printNavigation method to bootstrap default menu and printing it
+		* @author Onur Sahin <info@onur-sahin.de>
+		* @return void
+		*/
 		public function printBootstrapNavigation() {
 			
 			$search = array("page-level-0", "has-children", "has-parent", "class=\"dropdown-toggle");
