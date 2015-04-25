@@ -24,6 +24,6 @@
 	$module_license		= 'GNU General Public License';
 	$module_license_terms = '-';
 	$module_description	= 'A Module which creates navigations for WebsiteBaker (Also compatible with Lepton CMS). Bootstrap Navigations are also possible with this module.';
-	$module_description	.= '<br /><a target="_blank" href="doc/">Documentation</a>';
+	$module_description	.= '<br /><a target="_blank" href="'.WB_URL.'/modules/'.$module_directory.'/doc/">Documentation</a>';
 	 
 ?>
