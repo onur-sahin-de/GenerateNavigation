@@ -8,7 +8,7 @@
 	 * @module          generate_navigation
 	 * @author          Onur Sahin, www.onur-sahin.de
 	 * @copyright       2015 Onur Sahin, www.onur-sahin.de
-	 * @link            www.onur-sahin.de/downloads/generate-navigation
+	 * @link            https://github.com/onur-sahin-de/GenerateNavigation
 	 * @license         http://www.gnu.org/licenses/gpl.html
 	 * @license_terms   please see info.php of this module
 	 *
@@ -20,7 +20,7 @@
 	 
 
 	class GenerateNavigation {
-		
+
 		const PAGE_TITLE = "page_title";
 		const MENU_TITLE = "menu_title";
 		const PAGE_ID = "page_id";
@@ -38,12 +38,11 @@
 		const PAGE_VISIBILITY_NONE  = "none";
 		const PAGE_TRAIL = "page_trail";
 		const COUNT_CHILDREN = "count_children";
-		
 		const PAGE_ADMIN_GROUPS = 'admin_groups';
 		const PAGE_ADMIN_USERS  = 'admin_users';
 		const PAGE_VIEW_GROUPS  = 'viewing_groups';
 		const PAGE_VIEW_USERS   = 'viewing_users';
-		
+
 		private $levelID = 0;
 		private $parentID = 0;
 		private $menuID = 1;
@@ -55,7 +54,6 @@
 		private $firstLevelIDName = "";
 		private $actualVisibilityOption = array("public");
 		private $isUserAllowedToSeeActualPage = false;
-		
 		protected $oDb  = null;
 		protected $oApp = null;
 		
@@ -176,7 +174,6 @@
 			$aClass = "";
 			$furtherNavigationOptionContent = "";
 
-			//$sql = 'SELECT * FROM '.TABLE_PREFIX.'pages WHERE '.self::PAGE_LEVEL.' = '.$this->levelID.' AND '.self::PAGE_VISIBILITY.' = "public" AND '.self::PAGE_MENU.' = '.$this->menuID.' ORDER BY '.self::PAGE_POSITION.' ASC';
 			$sql = 'SELECT * FROM '.TABLE_PREFIX.'pages WHERE '.self::PAGE_LEVEL.' = '.$this->levelID.' AND '.self::PAGE_MENU.' = '.$this->menuID.' ORDER BY '.self::PAGE_POSITION.' ASC';
 			$result = $this->oDb->query($sql);
 			
